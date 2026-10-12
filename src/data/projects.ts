@@ -25,6 +25,15 @@ export type Highlight = {
   nodes: string[];
 };
 
+export type Screen = {
+  src: string;
+  label: string;
+  w: number;
+  h: number;
+  /** object-position quando o print é cortado para caber no painel */
+  position?: string;
+};
+
 export type Project = {
   slug: string;
   name: string;
@@ -39,6 +48,8 @@ export type Project = {
   highlights: Highlight[];
   stack: string[];
   links: { label: string; href: string }[];
+  /** prints reais, capturados do projeto rodando */
+  screens: Screen[];
   diagram: { nodes: DiagramNode[]; edges: DiagramEdge[] };
 };
 
@@ -63,6 +74,10 @@ export const projects: Project[] = [
     ],
     stack: ["Next.js 16", "TypeScript", "Tailwind v4", "Supabase", "NextAuth v5", "Claude API", "Evolution API", "Stripe"],
     links: [{ label: "Código", href: gh("zendoc") }],
+    screens: [
+      { src: "/img/projetos/iazen/inicio.webp", label: "Página inicial", w: 1440, h: 900 },
+      { src: "/img/projetos/iazen/login.webp", label: "Login", w: 1440, h: 900 },
+    ],
     diagram: {
       nodes: [
         { id: "paciente", label: "Paciente", sub: "no WhatsApp", x: 10, y: 30, tone: "user" },
@@ -103,6 +118,10 @@ export const projects: Project[] = [
       { label: "API", href: gh("backend_empresta_ai") },
       { label: "Front-end", href: gh("react_empresta_ai") },
     ],
+    screens: [
+      { src: "/img/projetos/empresta-ai/login.webp", label: "Login", w: 1440, h: 900 },
+      { src: "/img/projetos/empresta-ai/cadastro.webp", label: "Cadastro", w: 1440, h: 900 },
+    ],
     diagram: {
       nodes: [
         { id: "user", label: "Usuários", sub: "quem empresta e quem pega", x: 10, y: 30, w: 170, tone: "user" },
@@ -140,6 +159,12 @@ export const projects: Project[] = [
     ],
     stack: ["React", "TypeScript", "Vite", "Radix UI", "Tailwind CSS", "React Query"],
     links: [{ label: "Código", href: gh("guild-sync-web") }],
+    screens: [
+      { src: "/img/projetos/groupsync/dashboard.webp", label: "Dashboard", w: 1440, h: 900 },
+      { src: "/img/projetos/groupsync/analytics.webp", label: "Analytics", w: 1440, h: 900 },
+      { src: "/img/projetos/groupsync/automacoes.webp", label: "Automações", w: 1440, h: 900 },
+      { src: "/img/projetos/groupsync/inicio.webp", label: "Página inicial", w: 1440, h: 900 },
+    ],
     diagram: {
       nodes: [
         { id: "admin", label: "Dono do servidor", sub: "navegador", x: 10, y: 30, tone: "user" },
@@ -174,6 +199,9 @@ export const projects: Project[] = [
     ],
     stack: ["Electron", "React", "TypeScript", "Vite", "Framer Motion", "electron-store"],
     links: [{ label: "Código", href: gh("tasktray") }],
+    screens: [
+      { src: "/img/projetos/tasktray/bandeja.webp", label: "Aberto na bandeja do sistema", w: 1600, h: 1072, position: "right top" },
+    ],
     diagram: {
       nodes: [
         { id: "you", label: "Você", sub: "Ctrl + K", x: 10, y: 30, tone: "user" },
@@ -212,6 +240,9 @@ export const projects: Project[] = [
       { label: "Ver online", href: "https://web-mydoctor.vercel.app" },
       { label: "Web", href: gh("web-mydoctor") },
       { label: "API", href: gh("backend-mydoctor") },
+    ],
+    screens: [
+      { src: "/img/projetos/mydoctor/login.webp", label: "Login", w: 1440, h: 900 },
     ],
     diagram: {
       nodes: [

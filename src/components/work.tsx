@@ -8,7 +8,7 @@ import { gsap, SplitText, useGSAP } from "@/lib/gsap";
 import { laneById } from "@/lib/lanes";
 import { EASE_OUT } from "@/lib/motion";
 import { animationsEnabled } from "@/lib/motion-pref";
-import { ArchDiagram } from "./arch-diagram";
+import { ProjectPanel } from "./project-panel";
 import { GlitchName } from "./glitch-name";
 import { SplitHeading } from "./split-heading";
 
@@ -107,14 +107,14 @@ function ProjectBlock({
       </p>
       <p className="mt-5 max-w-[52ch] text-pretty text-[16px] leading-relaxed text-fog">{project.summary}</p>
 
-      {/* no celular o diagrama vem antes dos destaques, para o toque acender algo visível */}
-      <div className="mt-8 rounded-2xl border border-wire bg-void-2/50 p-4 lg:hidden">
-        <ArchDiagram title={project.name} nodes={project.diagram.nodes} edges={project.diagram.edges} focus={mine?.nodes} />
+      {/* no celular o painel vem antes dos destaques, para o toque acender algo visível */}
+      <div className="mt-8 rounded-3xl border border-wire bg-void-2/50 p-3 lg:hidden">
+        <ProjectPanel project={project} focus={mine?.nodes} />
       </div>
 
       <div className="mt-9 max-w-[54ch]">
         <p className="text-[13px] text-fog">
-          <span className="hidden lg:inline">Passe o cursor em cada ponto para ver onde ele acontece na arquitetura.</span>
+          <span className="hidden lg:inline">Passe o cursor em cada ponto para ver onde ele acontece na arquitetura, ao lado.</span>
           <span className="lg:hidden">Toque em cada ponto para ver onde ele acontece no diagrama acima.</span>
         </p>
         <ol className="relative mt-3">
@@ -218,7 +218,7 @@ export function Work({ repos }: { repos: RepoStats }) {
       </div>
 
       <div className="mt-10 grid gap-16 lg:mt-0 lg:grid-cols-[1fr_1.1fr]">
-        <div>
+        <div className="min-w-0">
           {projects.map((p, i) => (
             <ProjectBlock
               key={p.slug}
@@ -235,7 +235,7 @@ export function Work({ repos }: { repos: RepoStats }) {
 
         <div className="hidden lg:block">
           <div className="sticky top-[12vh] flex h-[76vh] flex-col justify-center">
-            <div className="relative rounded-2xl border border-wire bg-void-2/50 p-8">
+            <div className="relative rounded-[32px] border border-wire bg-void-2/50 p-5">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={current.slug}
@@ -244,12 +244,7 @@ export function Work({ repos }: { repos: RepoStats }) {
                   exit={{ opacity: 0, filter: "blur(4px)" }}
                   transition={{ duration: 0.22, ease: EASE_OUT }}
                 >
-                  <ArchDiagram
-                    title={current.name}
-                    nodes={current.diagram.nodes}
-                    edges={current.diagram.edges}
-                    focus={focus?.slug === current.slug ? focus.nodes : null}
-                  />
+                  <ProjectPanel project={current} focus={focus?.slug === current.slug ? focus.nodes : null} />
                 </motion.div>
               </AnimatePresence>
             </div>

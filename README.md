@@ -22,6 +22,7 @@ pnpm dev                     # http://localhost:3000
 | Boot de abertura (só CSS, roda uma vez por sessão) | `src/components/boot.tsx` |
 | Fios de luz neurais no fundo do hero (shader Neuro Noise da Paper) | `src/components/neuro-field.tsx` |
 | Nome em fonte variável que alarga perto do cursor | `src/components/proximity-name.tsx` |
+| Prints reais dos projetos (WebP em `public/img/projetos/`) com ampliação | `src/components/project-panel.tsx`, `screens` em `src/data/projects.ts` |
 | Diagramas de arquitetura animados | `src/components/arch-diagram.tsx`, dados em `src/data/projects.ts` |
 | Histórico em grafo de commits | `src/components/history-graph.tsx`, branches em `src/lib/lanes.ts` |
 | Retrato em ASCII com lente que revela a foto | `src/components/ascii-portrait.tsx` |
