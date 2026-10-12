@@ -1,6 +1,6 @@
 # iury magano — portfólio
 
-No ar em **[portfolio-next-one-self.vercel.app](https://portfolio-next-one-self.vercel.app)**. Cada push na `main` publica sozinho pela Vercel.
+No ar em **[iurymagano.vercel.app](https://iurymagano.vercel.app)**. Cada push na `main` publica sozinho pela Vercel.
 
 Portfólio pessoal em Next.js 16. A ideia central: a carreira contada como um `git log --graph`.
 Cada repositório público vira um commit numa branch (produto, web, API, mobile, fundamentos) e o grafo
