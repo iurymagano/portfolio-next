@@ -233,7 +233,7 @@ export function Work({ repos }: { repos: RepoStats }) {
           ))}
         </div>
 
-        <div className="hidden lg:block">
+        <div className="hidden min-w-0 lg:block">
           <div className="sticky top-[12vh] flex h-[76vh] flex-col justify-center">
             <div className="relative rounded-[32px] border border-wire bg-void-2/50 p-5">
               <AnimatePresence mode="wait">

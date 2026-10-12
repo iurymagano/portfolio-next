@@ -118,7 +118,7 @@ export function ProjectPanel({
       {/* a linha de miniaturas sempre reserva espaço: o painel fixo não muda de altura ao trocar de vista */}
       <div className="mt-4 h-[42px] sm:h-[50px]">
         {!showArch && project.screens.length > 1 && (
-          <ul className="flex gap-2 overflow-x-auto" aria-label="Telas">
+          <ul className="flex gap-2 overflow-x-auto pb-1" aria-label="Telas">
             {project.screens.map((s, i) => (
               <li key={s.src}>
                 <button

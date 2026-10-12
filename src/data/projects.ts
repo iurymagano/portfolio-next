@@ -119,8 +119,12 @@ export const projects: Project[] = [
       { label: "Front-end", href: gh("react_empresta_ai") },
     ],
     screens: [
+      { src: "/img/projetos/empresta-ai/marketplace.webp", label: "Marketplace", w: 1440, h: 900 },
+      { src: "/img/projetos/empresta-ai/chat.webp", label: "Chat entre as partes", w: 1440, h: 900 },
+      { src: "/img/projetos/empresta-ai/emprestimos.webp", label: "Solicitações de empréstimo", w: 1440, h: 900 },
+      { src: "/img/projetos/empresta-ai/item.webp", label: "Detalhe do item", w: 1440, h: 900 },
+      { src: "/img/projetos/empresta-ai/adicionar.webp", label: "Cadastro de item", w: 1440, h: 900 },
       { src: "/img/projetos/empresta-ai/login.webp", label: "Login", w: 1440, h: 900 },
-      { src: "/img/projetos/empresta-ai/cadastro.webp", label: "Cadastro", w: 1440, h: 900 },
     ],
     diagram: {
       nodes: [
@@ -163,6 +167,10 @@ export const projects: Project[] = [
       { src: "/img/projetos/groupsync/dashboard.webp", label: "Dashboard", w: 1440, h: 900 },
       { src: "/img/projetos/groupsync/analytics.webp", label: "Analytics", w: 1440, h: 900 },
       { src: "/img/projetos/groupsync/automacoes.webp", label: "Automações", w: 1440, h: 900 },
+      { src: "/img/projetos/groupsync/relatorios.webp", label: "Relatórios financeiros", w: 1440, h: 900 },
+      { src: "/img/projetos/groupsync/servidores.webp", label: "Servidores do Discord", w: 1440, h: 900 },
+      { src: "/img/projetos/groupsync/usuarios.webp", label: "Membros", w: 1440, h: 900 },
+      { src: "/img/projetos/groupsync/planos.webp", label: "Planos", w: 1440, h: 900 },
       { src: "/img/projetos/groupsync/inicio.webp", label: "Página inicial", w: 1440, h: 900 },
     ],
     diagram: {
@@ -200,7 +208,9 @@ export const projects: Project[] = [
     stack: ["Electron", "React", "TypeScript", "Vite", "Framer Motion", "electron-store"],
     links: [{ label: "Código", href: gh("tasktray") }],
     screens: [
-      { src: "/img/projetos/tasktray/bandeja.webp", label: "Aberto na bandeja do sistema", w: 1600, h: 1072, position: "right top" },
+      { src: "/img/projetos/tasktray/janela.webp", label: "Janela aberta ao lado da bandeja", w: 1440, h: 900 },
+      { src: "/img/projetos/tasktray/nova-tarefa.webp", label: "Adicionando uma tarefa", w: 1440, h: 900 },
+      { src: "/img/projetos/tasktray/bandeja.webp", label: "Print do README, no Linux", w: 1600, h: 1072, position: "right top" },
     ],
     diagram: {
       nodes: [
@@ -242,6 +252,8 @@ export const projects: Project[] = [
       { label: "API", href: gh("backend-mydoctor") },
     ],
     screens: [
+      { src: "/img/projetos/mydoctor/profissionais.webp", label: "Busca de profissionais", w: 1440, h: 900 },
+      { src: "/img/projetos/mydoctor/perfil.webp", label: "Perfil do paciente", w: 1440, h: 900 },
       { src: "/img/projetos/mydoctor/login.webp", label: "Login", w: 1440, h: 900 },
     ],
     diagram: {
