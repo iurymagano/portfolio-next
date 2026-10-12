@@ -6,8 +6,10 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { projects, type DiagramNode, type Project } from "@/data/projects";
 import { gsap, SplitText, useGSAP } from "@/lib/gsap";
 import { laneById } from "@/lib/lanes";
+import { EASE_OUT } from "@/lib/motion";
 import { animationsEnabled } from "@/lib/motion-pref";
 import { ArchDiagram } from "./arch-diagram";
+import { GlitchName } from "./glitch-name";
 import { SplitHeading } from "./split-heading";
 
 export type RepoStats = Record<string, { sha: string | null; commits: number | null }>;
@@ -61,7 +63,7 @@ function ProjectBlock({
         mask: "lines",
         linesClass: "split-line",
         autoSplit: true,
-        onSplit: (self) => gsap.from(self.lines, { yPercent: 110, duration: 0.9, ease: "expo.out", stagger: 0.09 }),
+        onSplit: (self) => gsap.from(self.lines, { yPercent: 110, duration: 0.9, ease: "ui.out", stagger: 0.09 }),
       });
     },
     { dependencies: [active], scope: ref, revertOnUpdate: true },
@@ -86,14 +88,14 @@ function ProjectBlock({
       </p>
       <h3
         translate="no"
-        className="vf mt-3 text-[clamp(2.75rem,7vw,6.5rem)] leading-[0.9] tracking-tight transition-[color,font-variation-settings] duration-700"
+        className="vf mt-3 text-[clamp(2.75rem,7vw,6.5rem)] leading-[0.9] tracking-tight transition-[color,font-variation-settings] duration-700 ease-in-out motion-reduce:transition-[color]"
         style={{
           ["--w" as string]: active ? 125 : 90,
           ["--g" as string]: active ? 800 : 500,
           color: active ? "var(--ink)" : "color-mix(in oklab, var(--fog) 55%, transparent)",
         }}
       >
-        {project.name}
+        <GlitchName text={project.name} />
       </h3>
 
       <p
@@ -124,7 +126,7 @@ function ProjectBlock({
                 <button type="button" {...bind(`h${i}`, h.nodes)} className="group relative flex w-full gap-4 py-2.5 text-left">
                   <span
                     aria-hidden
-                    className="relative z-10 mt-[0.4em] size-[11px] shrink-0 rounded-full border-2 transition-[background-color,transform] duration-300 group-hover:scale-125"
+                    className="relative z-10 mt-[0.4em] size-[11px] shrink-0 rounded-full border-2 transition-[background-color,scale] duration-300 motion-safe:group-hover:scale-125"
                     style={{ borderColor: color, background: on ? color : "var(--void)" }}
                   />
                   <span className={`text-[16px] leading-snug transition-colors duration-300 ${on ? "text-ink" : "text-ink/70 group-hover:text-ink"}`}>
@@ -239,8 +241,8 @@ export function Work({ repos }: { repos: RepoStats }) {
                   key={current.slug}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  exit={{ opacity: 0, filter: "blur(8px)" }}
-                  transition={{ duration: 0.25 }}
+                  exit={{ opacity: 0, filter: "blur(4px)" }}
+                  transition={{ duration: 0.22, ease: EASE_OUT }}
                 >
                   <ArchDiagram
                     title={current.name}
@@ -258,13 +260,13 @@ export function Work({ repos }: { repos: RepoStats }) {
                   type="button"
                   onClick={() => jump(p.slug)}
                   aria-current={i === active}
-                  className={`relative text-sm transition-colors ${i === active ? "text-ink" : "text-fog hover:text-ink"}`}
+                  className={`relative py-2 text-sm transition-colors ${i === active ? "text-ink" : "text-fog hover:text-ink"}`}
                 >
                   {p.name}
                   {i === active && (
                     <motion.span
                       layoutId="work-indicator"
-                      className="absolute -bottom-1.5 left-0 h-px w-full"
+                      className="absolute bottom-0.5 left-0 h-px w-full"
                       style={{ background: laneById[p.lane].color }}
                     />
                   )}

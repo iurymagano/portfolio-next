@@ -1,6 +1,7 @@
 import { profile } from "@/data/profile";
 import { NeuroField } from "./neuro-field";
 import { LocalTime } from "./local-time";
+import { RepoCount } from "./repo-count";
 import { ProximityName } from "./proximity-name";
 
 export function Hero({ repos }: { repos: number }) {
@@ -18,7 +19,7 @@ export function Hero({ repos }: { repos: number }) {
             Desenvolvedor full stack. Construo produtos inteiros, do banco de dados à interface, e coloco no ar.
           </p>
           <p className="leading-snug text-fog">
-            {repos} repositórios públicos desde 2021.
+            <RepoCount value={repos} /> repositórios públicos desde 2021.
             <br />
             TypeScript, React e Node. Agora também Java.
           </p>

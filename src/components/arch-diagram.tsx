@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { EASE_IN_OUT, EASE_OUT } from "@/lib/motion";
 import { useAnimationsEnabled } from "@/lib/motion-pref";
 import type { DiagramEdge, DiagramNode, NodeTone } from "@/data/projects";
 
@@ -75,16 +76,16 @@ function Diagram({
         const dur = 1.8 + ((i * 0.37) % 1.1);
         const lit = !focus || (focus.includes(e.from) && focus.includes(e.to));
         return (
-          <g key={`${e.from}-${e.to}`} style={{ opacity: lit ? 1 : 0.12, transition: "opacity .35s" }}>
+          <g key={`${e.from}-${e.to}`} style={{ opacity: lit ? 1 : 0.12, transition: "opacity 300ms ease" }}>
             <motion.path
               d={d}
               fill="none"
               stroke={focus && lit ? color : "var(--edge)"}
               strokeWidth={focus && lit ? 2 : 1.25}
-              style={{ transition: "stroke .35s, stroke-width .35s" }}
+              style={{ transition: "stroke 300ms ease, stroke-width 300ms ease" }}
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: 0.7, delay: 0.25 + i * 0.08, ease: [0.65, 0, 0.35, 1] }}
+              transition={{ duration: 0.7, delay: 0.25 + i * 0.08, ease: EASE_IN_OUT }}
             />
             {animatePackets && (
               <>
@@ -132,14 +133,14 @@ function Diagram({
             key={n.id}
             style={{
               opacity: lit ? 1 : 0.2,
-              transition: "opacity .35s",
+              transition: "opacity 300ms ease",
               filter: focus && lit ? `drop-shadow(0 0 12px color-mix(in oklab, ${color} 50%, transparent))` : undefined,
             }}
           >
           <motion.g
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, transform: "translateY(8px)" }}
+            animate={{ opacity: 1, transform: "translateY(0px)" }}
+            transition={{ duration: 0.45, delay: i * 0.06, ease: EASE_OUT }}
           >
             <rect
               x={b.x}

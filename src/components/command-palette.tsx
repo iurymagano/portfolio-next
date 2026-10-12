@@ -1,6 +1,5 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
 import { useLenis } from "lenis/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { copyEmail, toast } from "@/lib/events";
@@ -8,7 +7,12 @@ import { setPaused, usePaused } from "@/lib/motion-pref";
 import { laneById, type LaneId } from "@/lib/lanes";
 import { profile } from "@/data/profile";
 
-export type PaletteRepo = { name: string; url: string; message: string; lane: LaneId };
+export type PaletteRepo = {
+  name: string;
+  url: string;
+  message: string;
+  lane: LaneId;
+};
 
 type Item = {
   id: string;
@@ -30,10 +34,7 @@ const sections = [
 ];
 
 const normalize = (s: string) =>
-  s
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "");
+  s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 
 export function CommandPalette({ repos }: { repos: PaletteRepo[] }) {
   const [open, setOpen] = useState(false);
@@ -55,16 +56,44 @@ export function CommandPalette({ repos }: { repos: PaletteRepo[] }) {
     const go = (id: string) => () => {
       const el = document.getElementById(id);
       if (!el) return;
-      if (lenis) lenis.scrollTo(el, { offset: id === "inicio" ? 0 : -40, duration: 1.4 });
+      if (lenis)
+        lenis.scrollTo(el, {
+          offset: id === "inicio" ? 0 : -40,
+          duration: 1.4,
+        });
       else el.scrollIntoView({ behavior: "smooth" });
     };
-    const external = (href: string) => () => window.open(href, "_blank", "noopener,noreferrer");
+    const external = (href: string) => () =>
+      window.open(href, "_blank", "noopener,noreferrer");
 
     return [
-      ...sections.map((s) => ({ id: `go-${s.id}`, group: "Ir para" as const, label: s.label, run: go(s.id) })),
-      { id: "email", group: "Ações", label: "Copiar e-mail", detail: profile.email, run: () => copyEmail(profile.email) },
-      { id: "github", group: "Ações", label: "Abrir GitHub", detail: "github.com/iurymagano", run: external(profile.github) },
-      { id: "linkedin", group: "Ações", label: "Abrir LinkedIn", keywords: "linkedin", run: external(profile.linkedin) },
+      ...sections.map((s) => ({
+        id: `go-${s.id}`,
+        group: "Ir para" as const,
+        label: s.label,
+        run: go(s.id),
+      })),
+      {
+        id: "email",
+        group: "Ações",
+        label: "Copiar e-mail",
+        detail: profile.email,
+        run: () => copyEmail(profile.email),
+      },
+      {
+        id: "github",
+        group: "Ações",
+        label: "Abrir GitHub",
+        detail: "github.com/iurymagano",
+        run: external(profile.github),
+      },
+      {
+        id: "linkedin",
+        group: "Ações",
+        label: "Abrir LinkedIn",
+        keywords: "linkedin",
+        run: external(profile.linkedin),
+      },
       {
         id: "motion",
         group: "Ações",
@@ -94,10 +123,14 @@ export function CommandPalette({ repos }: { repos: PaletteRepo[] }) {
 
   const results = useMemo(() => {
     const q = normalize(query.trim());
-    if (!q) return items.filter((i) => !i.secret && i.group !== "Repositórios").concat(items.filter((i) => i.group === "Repositórios").slice(0, 6));
+    if (!q)
+      return items
+        .filter((i) => !i.secret && i.group !== "Repositórios")
+        .concat(items.filter((i) => i.group === "Repositórios").slice(0, 6));
     return items.filter((i) => {
       const hay = normalize(`${i.label} ${i.detail ?? ""} ${i.keywords ?? ""}`);
-      if (i.secret) return normalize(i.keywords ?? "").includes(q) && q.length >= 5;
+      if (i.secret)
+        return normalize(i.keywords ?? "").includes(q) && q.length >= 5;
       return q.split(/\s+/).every((part) => hay.includes(part));
     });
   }, [items, query]);
@@ -132,7 +165,9 @@ export function CommandPalette({ repos }: { repos: PaletteRepo[] }) {
   }, [open, lenis]);
 
   useEffect(() => {
-    list.current?.querySelector(`[data-index="${active}"]`)?.scrollIntoView({ block: "nearest" });
+    list.current
+      ?.querySelector(`[data-index="${active}"]`)
+      ?.scrollIntoView({ block: "nearest" });
   }, [active]);
 
   const choose = (item: Item | undefined) => {
@@ -162,92 +197,108 @@ export function CommandPalette({ repos }: { repos: PaletteRepo[] }) {
 
   let lastGroup = "";
 
+  // sem animação de abrir/fechar: é acionada pelo teclado muitas vezes por dia (como o Raycast)
+  if (!open) return null;
+
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          className="fixed inset-0 z-[75] flex items-start justify-center bg-void/70 px-4 pt-[12vh] backdrop-blur-md"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.18 }}
-          onMouseDown={(e) => e.target === e.currentTarget && close()}
+    <div
+      className="fixed inset-0 z-[75] flex items-start justify-center bg-void/70 px-4 pt-[12vh] backdrop-blur-md"
+      onMouseDown={(e) => e.target === e.currentTarget && close()}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Paleta de comandos"
+        className="w-full max-w-xl overflow-hidden rounded-2xl border border-wire bg-void-2 shadow-[0_30px_120px_-20px_rgba(92,225,230,0.25)]"
+      >
+        <div className="flex items-center gap-3 border-b border-wire px-4 transition-colors focus-within:border-web/60">
+          <span className="shrink-0 whitespace-nowrap font-mono text-sm text-web">
+            ~ $
+          </span>
+          <input
+            ref={input}
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setActive(0);
+            }}
+            onKeyDown={onInputKey}
+            placeholder="Procure uma seção, ação ou repositório…"
+            aria-label="Comando ou repositório"
+            autoComplete="off"
+            spellCheck={false}
+            className="h-14 w-full bg-transparent text-[15px] text-ink outline-none placeholder:text-fog focus-visible:outline-none"
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="palette-list"
+            aria-activedescendant={
+              results[active] ? `opt-${results[active].id}` : undefined
+            }
+          />
+          <kbd className="rounded border border-wire px-1.5 py-0.5 font-mono text-[11px] text-fog">
+            esc
+          </kbd>
+        </div>
+        <ul
+          ref={list}
+          id="palette-list"
+          role="listbox"
+          className="max-h-[52vh] overflow-y-auto overscroll-contain p-2"
+          data-lenis-prevent
         >
-          <motion.div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Paleta de comandos"
-            className="w-full max-w-xl overflow-hidden rounded-xl border border-wire bg-void-2 shadow-[0_30px_120px_-20px_rgba(92,225,230,0.25)]"
-            initial={{ y: -16, scale: 0.98, opacity: 0 }}
-            animate={{ y: 0, scale: 1, opacity: 1 }}
-            exit={{ y: -8, scale: 0.98, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 500, damping: 36 }}
-          >
-            <div className="flex items-center gap-3 border-b border-wire px-4 transition-colors focus-within:border-web/60">
-              <span className="shrink-0 whitespace-nowrap font-mono text-sm text-web">~ $</span>
-              <input
-                ref={input}
-                value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setActive(0);
-                }}
-                onKeyDown={onInputKey}
-                placeholder="Procure uma seção, ação ou repositório…"
-                aria-label="Comando ou repositório"
-                autoComplete="off"
-                spellCheck={false}
-                className="h-14 w-full bg-transparent text-[15px] text-ink outline-none placeholder:text-fog focus-visible:outline-none"
-                role="combobox"
-                aria-expanded="true"
-                aria-controls="palette-list"
-                aria-activedescendant={results[active] ? `opt-${results[active].id}` : undefined}
-              />
-              <kbd className="rounded border border-wire px-1.5 py-0.5 font-mono text-[11px] text-fog">esc</kbd>
-            </div>
-            <ul ref={list} id="palette-list" role="listbox" className="max-h-[52vh] overflow-y-auto overscroll-contain p-2" data-lenis-prevent>
-              {results.length === 0 && (
-                <li className="px-3 py-8 text-center text-sm text-fog">
-                  Nada com “{query}”. Tente o nome de um repositório, como tasktray.
-                </li>
-              )}
-              {results.map((item, i) => {
-                const header = item.group !== lastGroup ? item.group : null;
-                lastGroup = item.group;
-                return (
-                  <li key={item.id} role="presentation">
-                    {header && <p className="px-3 pb-1 pt-3 text-xs text-fog">{header}</p>}
-                    <div
-                      id={`opt-${item.id}`}
-                      role="option"
-                      aria-selected={i === active}
-                      data-index={i}
-                      onMouseMove={() => setActive(i)}
-                      onClick={() => choose(item)}
-                      className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 transition-colors ${
-                        i === active ? "bg-wire/80 text-ink" : "text-ink/80"
-                      }`}
-                    >
-                      {item.color ? (
-                        <span className="size-2 shrink-0 rounded-full" style={{ background: item.color }} />
-                      ) : (
-                        <span className="size-2 shrink-0 rounded-full border border-fog/60" />
-                      )}
-                      <span
-                        translate={item.group === "Repositórios" ? "no" : undefined}
-                        className={item.group === "Repositórios" ? "font-mono text-[13px]" : "text-[15px]"}
-                      >
-                        {item.label}
-                      </span>
-                      {item.detail && <span className="ml-auto truncate pl-4 text-sm text-fog">{item.detail}</span>}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          {results.length === 0 && (
+            <li className="px-3 py-8 text-center text-sm text-fog">
+              Nada com “{query}”. Tente o nome de um repositório, como tasktray.
+            </li>
+          )}
+          {results.map((item, i) => {
+            const header = item.group !== lastGroup ? item.group : null;
+            lastGroup = item.group;
+            return (
+              <li key={item.id} role="presentation">
+                {header && (
+                  <p className="px-3 pb-1 pt-3 text-xs text-fog">{header}</p>
+                )}
+                <div
+                  id={`opt-${item.id}`}
+                  role="option"
+                  aria-selected={i === active}
+                  data-index={i}
+                  onMouseMove={() => setActive(i)}
+                  onClick={() => choose(item)}
+                  className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 ${
+                    i === active ? "bg-wire/80 text-ink" : "text-ink/80"
+                  }`}
+                >
+                  {item.color ? (
+                    <span
+                      className="size-2 shrink-0 rounded-full"
+                      style={{ background: item.color }}
+                    />
+                  ) : (
+                    <span className="size-2 shrink-0 rounded-full border border-fog/60" />
+                  )}
+                  <span
+                    translate={item.group === "Repositórios" ? "no" : undefined}
+                    className={
+                      item.group === "Repositórios"
+                        ? "font-mono text-[13px]"
+                        : "text-[15px]"
+                    }
+                  >
+                    {item.label}
+                  </span>
+                  {item.detail && (
+                    <span className="ml-auto truncate pl-4 text-sm text-fog">
+                      {item.detail}
+                    </span>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
   );
 }

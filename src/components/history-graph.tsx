@@ -1,7 +1,8 @@
 "use client";
 
+import NumberFlow from "@number-flow/react";
 import { useMotionValueEvent, useScroll } from "motion/react";
-import { useMemo, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { gsap, MOTION_OK, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { lanes, laneById, systems, type LaneId } from "@/lib/lanes";
 import { isPaused } from "@/lib/motion-pref";
@@ -97,11 +98,21 @@ export function HistoryGraph({ commits }: { commits: GraphCommit[] }) {
     },
     { scope: ref },
   );
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    // com movimento reduzido o grafo já aparece inteiro
+  // o grafo é revelado de cima pra baixo conforme a rolagem. O valor vai direto no SVG e na
+  // linha de varredura (dois elementos), não numa variável no container, que recalcularia as 48 linhas
+  const svgRef = useRef<SVGSVGElement>(null);
+  const scanRef = useRef<HTMLDivElement>(null);
+  const reveal = (v: number) => {
     const p = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : v;
-    ref.current?.style.setProperty("--p", p.toFixed(4));
-  });
+    const h = ref.current?.offsetHeight ?? 0;
+    if (svgRef.current) svgRef.current.style.clipPath = `inset(0 0 ${((1 - p) * 100).toFixed(2)}% 0)`;
+    if (scanRef.current) {
+      scanRef.current.style.transform = `translateY(${(p * h).toFixed(1)}px)`;
+      scanRef.current.style.opacity = String(Math.min(1, Math.max(0, Math.min(p, 1 - p) * 30)));
+    }
+  };
+  useMotionValueEvent(scrollYProgress, "change", reveal);
+  useEffect(() => reveal(scrollYProgress.get()));
 
   const geo = useMemo(() => {
     const laneIndex = Object.fromEntries(lanes.map((l, i) => [l.id, i])) as Record<LaneId, number>;
@@ -147,6 +158,7 @@ export function HistoryGraph({ commits }: { commits: GraphCommit[] }) {
     return c;
   }, [commits]);
 
+  const visible = filter === "todos" ? commits.length : counts[filter];
   const hoveredSystem = hover ? geo.systemOf.get(hover) : undefined;
   const dim = (c: GraphCommit) => (filter !== "todos" && c.lane !== filter) || (hoveredSystem !== undefined && geo.systemOf.get(c.name) !== hoveredSystem);
 
@@ -162,7 +174,7 @@ export function HistoryGraph({ commits }: { commits: GraphCommit[] }) {
               type="button"
               aria-pressed={on}
               onClick={() => setFilter(l.id)}
-              className={`flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
+              className={`flex min-h-10 items-center gap-2 rounded-full border px-4 text-sm transition-[color,border-color,background-color,scale] duration-150 ease-out motion-safe:active:scale-[0.96] ${
                 on ? "border-ink/60 bg-ink/5 text-ink" : "border-wire text-fog hover:text-ink"
               }`}
             >
@@ -172,14 +184,19 @@ export function HistoryGraph({ commits }: { commits: GraphCommit[] }) {
             </button>
           );
         })}
+        <p aria-live="polite" className="ml-auto self-center text-sm text-fog">
+          Mostrando <NumberFlow value={visible} className="tabular-nums text-ink" /> de {commits.length}
+        </p>
       </div>
 
-      <div ref={ref} className="relative" style={{ ["--p" as string]: 0 } as CSSProperties}>
+      <div ref={ref} className="relative">
         <svg
+          ref={svgRef}
           aria-hidden
           width={geo.width}
           height={height}
-          className="graph-reveal pointer-events-none absolute left-0 top-0 overflow-visible"
+          className="pointer-events-none absolute left-0 top-0 overflow-visible"
+          style={{ clipPath: "inset(0 0 100% 0)" }}
         >
           {geo.spans.map((s) => (
             <line
@@ -205,18 +222,20 @@ export function HistoryGraph({ commits }: { commits: GraphCommit[] }) {
               className="transition-[stroke-width,stroke-opacity] duration-300"
             />
           ))}
+          {commits.map((c, i) => (
+            <g key={c.name} className="transition-opacity duration-300" opacity={dim(c) ? 0.3 : 1}>
+              <circle cx={geo.x(c.lane)} cy={geo.y(i)} r={compact ? 4 : 5} fill="var(--void)" stroke={laneById[c.lane].color} strokeWidth={2} />
+              <circle cx={geo.x(c.lane)} cy={geo.y(i)} r={2} fill={laneById[c.lane].color} />
+            </g>
+          ))}
         </svg>
 
         <ol className="relative">
-          {commits.map((c, i) => {
+          {commits.map((c) => {
             const lane = laneById[c.lane];
             const faded = dim(c);
             return (
-              <li
-                key={c.name}
-                className="commit-row"
-                style={{ ["--t" as string]: (i / commits.length).toFixed(4), height: ROW } as CSSProperties}
-              >
+              <li key={c.name} style={{ height: ROW }}>
                 <a
                   href={c.url}
                   target="_blank"
@@ -230,18 +249,6 @@ export function HistoryGraph({ commits }: { commits: GraphCommit[] }) {
                   }`}
                   style={{ paddingLeft: geo.width + 8 }}
                 >
-                  <svg aria-hidden width={geo.width} height={ROW} className="absolute left-0 top-0 overflow-visible">
-                    <circle
-                      className="commit-dot"
-                      cx={geo.x(c.lane)}
-                      cy={ROW / 2}
-                      r={compact ? 4 : 5}
-                      fill="var(--void)"
-                      stroke={lane.color}
-                      strokeWidth={2}
-                    />
-                    <circle className="commit-dot" cx={geo.x(c.lane)} cy={ROW / 2} r={2} fill={lane.color} />
-                  </svg>
                   <span
                     translate="no"
                     data-sha={c.sha ? c.sha.slice(0, 7) : undefined}
@@ -267,7 +274,7 @@ export function HistoryGraph({ commits }: { commits: GraphCommit[] }) {
           })}
         </ol>
 
-        <div aria-hidden className="pointer-events-none absolute left-0 right-0 h-px" style={{ top: "calc(var(--p) * 100%)", opacity: "clamp(0, min(var(--p), 1 - var(--p)) * 30, 1)" }}>
+        <div ref={scanRef} aria-hidden className="pointer-events-none absolute left-0 right-0 top-0 h-px opacity-0">
           <div className="h-px w-full bg-gradient-to-r from-web via-web/20 to-transparent opacity-60" />
         </div>
       </div>

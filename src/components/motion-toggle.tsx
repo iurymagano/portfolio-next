@@ -10,7 +10,7 @@ export function MotionToggle() {
       type="button"
       onClick={() => setPaused(!paused)}
       aria-pressed={paused}
-      className="self-start text-left text-fog underline decoration-wire underline-offset-4 transition-colors hover:text-ink sm:self-auto"
+      className="-my-2 self-start py-2 text-left text-fog underline decoration-wire underline-offset-4 transition-colors hover:text-ink sm:self-auto"
     >
       {paused ? "Retomar animações" : "Pausar animações"}
     </button>

@@ -37,7 +37,7 @@ export function SplitHeading({
               "--w": 62,
               "--g": 200,
               duration: 1.1,
-              ease: "expo.out",
+              ease: "ui.out",
               stagger: 0.022,
               scrollTrigger: { trigger: ref.current, start: "top 88%", once: true },
             }),

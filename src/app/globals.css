@@ -21,6 +21,10 @@
   --lane-api: #a78bfa;
   --lane-mobile: #ff6b9a;
   --lane-base: #7e86a8;
+
+  /* curvas de movimento (Emil Kowalski): saída forte para UI, in-out para o que se move na tela */
+  --ease-ui-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-ui-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 @theme inline {
@@ -35,6 +39,9 @@
   --color-api: var(--lane-api);
   --color-mobile: var(--lane-mobile);
   --color-base: var(--lane-base);
+
+  --ease-out: var(--ease-ui-out);
+  --ease-in-out: var(--ease-ui-in-out);
 
   --font-sans: var(--font-archivo);
   --font-mono: var(--font-jetbrains);
@@ -126,7 +133,7 @@ html.lenis body {
 
 /* Boot: some sozinho via CSS mesmo sem JS; o script inline marca visitas repetidas */
 .boot {
-  animation: boot-out 0.7s cubic-bezier(0.76, 0, 0.24, 1) 1.9s forwards;
+  animation: boot-out 0.7s var(--ease-ui-in-out) 1.9s forwards;
 }
 .boot-line {
   opacity: 0;
@@ -147,17 +154,48 @@ html[data-booted] .boot {
   }
 }
 
-/* Histórico: o grafo é revelado de cima pra baixo conforme --p (0..1) */
-.graph-reveal {
-  clip-path: inset(0 0 calc((1 - var(--p, 1)) * 100%) 0);
+/* Glitch RGB dos nomes de projeto: cópias do texto em rosa e ciano, em faixas que saltam */
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
 }
-.commit-row {
-  --on: clamp(0, (var(--p, 1) - var(--t, 0)) * 40, 1);
+.glitch::before {
+  color: var(--lane-mobile);
 }
-.commit-dot {
-  transform: scale(var(--on));
-  transform-box: fill-box;
-  transform-origin: center;
+.glitch::after {
+  color: var(--lane-web);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .glitch:hover::before {
+    opacity: 0.9;
+    animation: glitch-a 0.8s steps(1, end) infinite;
+  }
+  .glitch:hover::after {
+    opacity: 0.9;
+    animation: glitch-b 0.65s steps(1, end) infinite;
+  }
+}
+html[data-motion="paused"] .glitch::before,
+html[data-motion="paused"] .glitch::after {
+  display: none;
+}
+@keyframes glitch-a {
+  0% { transform: translate(-0.035em, 0); clip-path: inset(8% 0 62% 0); }
+  20% { transform: translate(0.05em, 0); clip-path: inset(48% 0 28% 0); }
+  40% { transform: translate(-0.02em, 0); clip-path: inset(72% 0 6% 0); }
+  60% { transform: translate(0.03em, 0); clip-path: inset(20% 0 55% 0); }
+  80% { transform: translate(-0.045em, 0); clip-path: inset(60% 0 15% 0); }
+}
+@keyframes glitch-b {
+  0% { transform: translate(0.03em, 0); clip-path: inset(62% 0 12% 0); }
+  25% { transform: translate(-0.04em, 0); clip-path: inset(12% 0 70% 0); }
+  50% { transform: translate(0.02em, 0); clip-path: inset(36% 0 40% 0); }
+  75% { transform: translate(-0.03em, 0); clip-path: inset(80% 0 2% 0); }
 }
 
 .grain::after {
@@ -174,11 +212,11 @@ html[data-booted] .boot {
   .boot {
     display: none;
   }
+  /* menos movimento, não zero: animações de keyframe saem, transições de cor e opacidade ficam */
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
   }
 }

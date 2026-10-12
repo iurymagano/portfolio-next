@@ -27,10 +27,10 @@ export function Toaster() {
         {message && (
           <motion.p
             key={message.id}
-            initial={{ y: 24, opacity: 0, filter: "blur(6px)" }}
-            animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-            exit={{ y: 12, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 420, damping: 32 }}
+            initial={{ transform: "translateY(24px)", opacity: 0, filter: "blur(6px)" }}
+            animate={{ transform: "translateY(0px)", opacity: 1, filter: "blur(0px)" }}
+            exit={{ transform: "translateY(12px)", opacity: 0 }}
+            transition={{ type: "spring", duration: 0.45, bounce: 0.15 }}
             className="rounded-full border border-wire bg-void-2 px-5 py-2.5 text-sm text-ink shadow-[0_0_40px_-8px_var(--lane-web)]"
           >
             {message.text}

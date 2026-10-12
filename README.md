@@ -27,6 +27,9 @@ pnpm dev                     # http://localhost:3000
 | Títulos que entram letra a letra (GSAP SplitText) | `src/components/split-heading.tsx` |
 | Hashes e comando do Histórico que "decodificam" (GSAP ScrambleText) | `src/components/history-graph.tsx`, `src/components/scramble-on-view.tsx` |
 | Pausar animações (rodapé e ⌘K), respeita movimento reduzido | `src/lib/motion-pref.ts` |
+| Glitch RGB no hover dos nomes de projeto (CSS, fonte real) | `src/components/glitch-name.tsx`, `.glitch` no `globals.css` |
+| Números que rolam dígito a dígito (number-flow) | `src/components/repo-count.tsx`, contador do Histórico |
+| Botões magnéticos (adaptado do motion-primitives, MIT) | `src/components/magnetic.tsx` |
 
 ## Dados do GitHub
 
@@ -45,6 +48,10 @@ Vercel: importe o repositório, defina `GITHUB_TOKEN` (opcional) e `NEXT_PUBLIC_
 
 ## Animação
 
+Curvas compartilhadas (as do Emil Kowalski) em três lugares que precisam bater: `--ease-ui-*` no
+`globals.css` (e `ease-out`/`ease-in-out` do Tailwind), `src/lib/motion.ts` para o Motion e `ui.out`/`ui.inOut`
+no GSAP. A paleta ⌘K abre sem animação de propósito: é atalho de teclado, usado muitas vezes.
+
 GSAP 3 (todos os plugins são gratuitos) com `useGSAP`, registrado em `src/lib/gsap.ts`. O Lenis avisa o
 ScrollTrigger a cada passo da rolagem. Tudo que anima sozinho para com `prefers-reduced-motion` ou com
 "Pausar animações".
@@ -55,7 +62,8 @@ travada em `0.0.81` porque a biblioteca ainda está em 0.0.x.
 ## Design
 
 Skills em `.claude/skills/` para o Claude Code seguir o mesmo critério nas próximas mudanças:
-`frontend-design` (Anthropic, Apache 2.0) e `gsap-*` (oficiais da GreenSock, MIT). A auditoria de
+`frontend-design` (Anthropic, Apache 2.0), `gsap-*` (oficiais da GreenSock, MIT), `emil-*` (Emil Kowalski,
+MIT: auditoria e revisão de animação) e `make-interfaces-feel-better` (Jakub Krehel, MIT: acabamento). A auditoria de
 acessibilidade e UX usou a skill `web-design-guidelines` da Vercel, que não vem no repositório; para usar:
 `npx skills add vercel-labs/agent-skills --skill web-design-guidelines`. Tokens de cor em `src/app/globals.css`.
 Tipografia: Archivo (eixo de largura variável) e JetBrains Mono.

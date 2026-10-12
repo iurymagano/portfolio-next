@@ -1,6 +1,7 @@
 "use client";
 
 import { openPalette } from "@/lib/events";
+import { Magnetic } from "./magnetic";
 import { ShortcutKey } from "./shortcut-key";
 
 const links = [
@@ -21,21 +22,26 @@ export function Nav() {
           <ul className="hidden items-center gap-7 md:flex">
             {links.map((l) => (
               <li key={l.href}>
-                <a href={l.href} className="opacity-70 transition-opacity hover:opacity-100">
+                <a
+                  href={l.href}
+                  className="opacity-70 transition-opacity hover:opacity-100"
+                >
                   {l.label}
                 </a>
               </li>
             ))}
           </ul>
-          <button
-            type="button"
-            onClick={openPalette}
-            className="group flex items-center gap-2 rounded-full border border-ink/25 px-3.5 py-1.5 transition-colors hover:border-ink"
-          >
-            <span className="md:hidden">Menu</span>
-            <span className="hidden md:inline">Comandos</span>
-            <ShortcutKey className="hidden font-mono text-xs opacity-60 md:inline" />
-          </button>
+          <Magnetic intensity={0.3} range={90}>
+            <button
+              type="button"
+              onClick={openPalette}
+              className="group flex min-h-10 items-center gap-2 rounded-full border border-ink/25 px-4 transition-[border-color,scale] duration-150 ease-out hover:border-ink motion-safe:active:scale-[0.96]"
+            >
+              <span className="md:hidden">Menu</span>
+              <span className="hidden md:inline">Comandos</span>
+              <ShortcutKey className="hidden font-mono text-xs opacity-60 md:inline" />
+            </button>
+          </Magnetic>
         </div>
       </nav>
     </header>
