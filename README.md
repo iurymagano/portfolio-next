@@ -1,5 +1,7 @@
 # iury magano — portfólio
 
+No ar em **[portfolio-next-one-self.vercel.app](https://portfolio-next-one-self.vercel.app)**. Cada push na `main` publica sozinho pela Vercel.
+
 Portfólio pessoal em Next.js 16. A ideia central: a carreira contada como um `git log --graph`.
 Cada repositório público vira um commit numa branch (produto, web, API, mobile, fundamentos) e o grafo
 é desenhado conforme a página rola. Os projetos principais aparecem como diagramas de arquitetura com
@@ -44,7 +46,8 @@ novo aparece sozinho em até uma hora. Se a API falhar, cai no snapshot `src/dat
 
 ## Deploy
 
-Vercel: importe o repositório, defina `GITHUB_TOKEN` (opcional) e `NEXT_PUBLIC_SITE_URL`.
+Publicado na Vercel com a integração do GitHub (push na `main` vai para produção). Variáveis: `NEXT_PUBLIC_SITE_URL`
+(definida) e `GITHUB_TOKEN` (opcional; um token sem nenhum escopo basta para ler dados públicos).
 
 ## Animação
 
